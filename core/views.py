@@ -13,16 +13,26 @@ def predict_data_structure(request):
         if serializer.is_valid():
             # Perform your actual classification here
             dummy_prediction = {
+                # "array": 0.1,
+                # "string": 0.05,
+                # "linked_list": 0.02,
+                # "tree": 0.5,
+                # "graph": 0.03,
+                # "hash_table": 0.15,
+                # "heap": 0.02,
+                # "stack": 0.08,
+                # "queue": 0.03,
+                # "trie": 0.02,
                 "array": 0.1,
                 "string": 0.05,
-                "linked_list": 0.02,
-                "tree": 0.5,
-                "graph": 0.03,
-                "hash_table": 0.15,
-                "heap": 0.02,
-                "stack": 0.08,
-                "queue": 0.03,
-                "trie": 0.02,
+                "dynamic_programming": 0.02,
+                "math": 0.5,
+                "hash_table": 0.03,
+                "greedy": 0.15,
+                "sorting": 0.02,
+                "depth_first_search": 0.08,
+                "breadth_first_search": 0.03,
+                "binary_search": 0.02,
             }
 
             # Create the Prediction object and save it
