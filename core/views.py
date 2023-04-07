@@ -25,7 +25,19 @@ def predict_data_structure(request):
                 "trie": 0.02,
             }
 
-            serializer.save(prediction_result=dummy_prediction)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Create the Prediction object and save it
+            prediction = Prediction(
+                title=serializer.validated_data["title"],
+                description=serializer.validated_data["description"],
+                model_used=serializer.validated_data["model_used"],
+                prediction_result=dummy_prediction,
+            )
+            prediction.save()
+
+            # Serialize the saved Prediction object and return the response
+            response_serializer = PredictionSerializer(prediction)
+            return Response(
+                response_serializer.data, status=status.HTTP_201_CREATED
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
