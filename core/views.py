@@ -1,3 +1,5 @@
+import random
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,16 +25,16 @@ def predict_data_structure(request):
                 # "stack": 0.08,
                 # "queue": 0.03,
                 # "trie": 0.02,
-                "array": 0.1,
-                "string": 0.05,
-                "dynamic_programming": 0.02,
-                "math": 0.5,
-                "hash_table": 0.03,
-                "greedy": 0.15,
-                "sorting": 0.02,
-                "depth_first_search": 0.08,
-                "breadth_first_search": 0.03,
-                "binary_search": 0.02,
+                "array": random.random(),
+                "string": random.random(),
+                "dynamic_programming": random.random(),
+                "math": random.random(),
+                "hash_table": random.random(),
+                "greedy": random.random(),
+                "sorting": random.random(),
+                "depth_first_search": random.random(),
+                "breadth_first_search": random.random(),
+                "binary_search": random.random(),
             }
 
             # Create the Prediction object and save it
