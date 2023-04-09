@@ -22,3 +22,11 @@ sqlparse==0.4.3
 tqdm==4.64.1
 urllib3==1.26.14
 yarl==1.8.2
+torch
+transformers
+joblib
+nltk
+gensim
+scikit-learn
+pandas
+xgboost
