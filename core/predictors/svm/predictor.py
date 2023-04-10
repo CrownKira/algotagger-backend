@@ -1,9 +1,10 @@
 import joblib
 from ..preprocess.text import dirty_to_clean
 
-XGB_MODELS_PATH = "core/predictors/svm/svm_models.joblib"
+SVM_MODELS_PATH = "core/predictors/svm/svm_models.joblib"
 
 svm_models = joblib.load(SVM_MODELS_PATH)
+
 
 def predict_svm(title, text):
     question = title + " " + text

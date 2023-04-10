@@ -8,6 +8,9 @@ from .predictors.xgb.predictor import predict_xgb
 from .predictors.distilbert.predictor import (
     predict_distilbert,
 )
+from .predictors.svm.predictor import (
+    predict_svm,
+)
 
 
 @api_view(["POST"])
@@ -24,6 +27,8 @@ def predict_data_structure(request):
                 dummy_prediction = predict_xgb(title, description)
             elif model_used.lower() == "distilbert":
                 dummy_prediction = predict_distilbert(title, description)
+            elif model_used.lower() == "svm":
+                dummy_prediction = predict_svm(title, description)
             else:
                 dummy_prediction = {
                     "array": random.random(),
