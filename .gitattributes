@@ -1,0 +1,2 @@
+*.bin filter=lfs diff=lfs merge=lfs -text
+core/predictors/distilbert/pytorch_distilbert.bin filter=lfs diff=lfs merge=lfs -text

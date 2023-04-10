@@ -3,6 +3,10 @@
 import os
 import sys
 
+from core.predictors.distilbert.predictor import (
+    DistilBERTClass,
+)
+
 
 def main():
     """Run administrative tasks."""

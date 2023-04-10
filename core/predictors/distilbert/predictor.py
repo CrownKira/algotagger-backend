@@ -3,14 +3,21 @@
 # !{sys.executable} -m pip install transformers
 # !{sys.executable} -m pip install torch
 
-from torch.utils.data import Dataset, DataLoader, RandomSampler, SequentialSampler
+from torch.utils.data import (
+    Dataset,
+    DataLoader,
+    RandomSampler,
+    SequentialSampler,
+)
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from torch import cuda
 import torch
 from transformers import DistilBertTokenizer, DistilBertModel
-from textproc import clean_questions
+from ..preprocess.text import clean_questions
+
+
 class MultiLabelDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_len):
         self.tokenizer = tokenizer
@@ -32,19 +39,20 @@ class MultiLabelDataset(Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             pad_to_max_length=True,
-            return_token_type_ids=True
+            return_token_type_ids=True,
         )
-        ids = inputs['input_ids']
-        mask = inputs['attention_mask']
+        ids = inputs["input_ids"]
+        mask = inputs["attention_mask"]
         token_type_ids = inputs["token_type_ids"]
 
-
         return {
-            'ids': torch.tensor(ids, dtype=torch.long),
-            'mask': torch.tensor(mask, dtype=torch.long),
-            'token_type_ids': torch.tensor(token_type_ids, dtype=torch.long),
-            'targets': torch.tensor(self.targets[index], dtype=torch.float)
+            "ids": torch.tensor(ids, dtype=torch.long),
+            "mask": torch.tensor(mask, dtype=torch.long),
+            "token_type_ids": torch.tensor(token_type_ids, dtype=torch.long),
+            "targets": torch.tensor(self.targets[index], dtype=torch.float),
         }
+
+
 class DistilBERTClass(torch.nn.Module):
     def __init__(self):
         super(DistilBERTClass, self).__init__()
@@ -66,51 +74,58 @@ class DistilBERTClass(torch.nn.Module):
 
 def validation(testing_loader, model, device):
     model.eval()
-    fin_targets=[]
-    fin_outputs=[]
+    fin_targets = []
+    fin_outputs = []
     with torch.no_grad():
         for _, data in tqdm(enumerate(testing_loader, 0)):
-            ids = data['ids'].to(device, dtype = torch.long)
-            mask = data['mask'].to(device, dtype = torch.long)
-            token_type_ids = data['token_type_ids'].to(device, dtype = torch.long)
-            targets = data['targets'].to(device, dtype = torch.float)
+            ids = data["ids"].to(device, dtype=torch.long)
+            mask = data["mask"].to(device, dtype=torch.long)
+            token_type_ids = data["token_type_ids"].to(
+                device, dtype=torch.long
+            )
+            targets = data["targets"].to(device, dtype=torch.float)
             outputs = model(ids, mask, token_type_ids)
             fin_targets.extend(targets.cpu().detach().numpy().tolist())
-            fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())
+            fin_outputs.extend(
+                torch.sigmoid(outputs).cpu().detach().numpy().tolist()
+            )
     return fin_outputs, fin_targets
 
-def predict(title, body):
+
+def predict_distilbert(title, body):
     question = title + " " + body
     testing = clean_questions([question])
-    topics=["array","string","dynamic_programming","math","hash_table","greedy","sorting","depth_first_search","breadth_first_search","binary_search"]
-    topic_mapping = {
-        "array": "Array",
-        "string": "String",
-        "dynamic_programming": "Dynamic Programming",
-        "math": "Math",
-        "hash_table": "Hash Table",
-        "greedy": "Greedy",
-        "sorting": "Sorting",
-        "depth_first_search": "Depth-First Search",
-        "breadth_first_search": "Breadth-First Search",
-        "binary_search": "Binary Search",
-    }
-    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased', truncation=True, do_lower_case=True)
-    model_path = "pytorch_distilbert.bin"
-    model = torch.load(model_path, map_location=torch.device('cpu'))
-    device = 'cuda' if cuda.is_available() else 'cpu'
+    topics = [
+        "array",
+        "string",
+        "dynamic_programming",
+        "math",
+        "hash_table",
+        "greedy",
+        "sorting",
+        "depth_first_search",
+        "breadth_first_search",
+        "binary_search",
+    ]
+    tokenizer = DistilBertTokenizer.from_pretrained(
+        "distilbert-base-uncased", truncation=True, do_lower_case=True
+    )
+    model_path = "core/predictors/distilbert/pytorch_distilbert.bin"
+    model = torch.load(model_path, map_location=torch.device("cpu"))
+    device = "cuda" if cuda.is_available() else "cpu"
     test_data = pd.DataFrame()
-    test_data['text'] = testing
-    test_data['labels'] = [np.zeros(10)]
+    test_data["text"] = testing
+    test_data["labels"] = [np.zeros(10)]
     MAX_LEN = 128
     TRAIN_BATCH_SIZE = 4
     VALID_BATCH_SIZE = 4
     EPOCHS = 25
     LEARNING_RATE = 1e-05
-    test_params = {'batch_size': VALID_BATCH_SIZE,
-                    'shuffle': True,
-                    'num_workers': 0
-                    }
+    test_params = {
+        "batch_size": VALID_BATCH_SIZE,
+        "shuffle": True,
+        "num_workers": 0,
+    }
     testing_set = MultiLabelDataset(test_data, tokenizer, MAX_LEN)
     testing_loader = DataLoader(testing_set, **test_params)
     prediction, targets = validation(testing_loader, model, device)

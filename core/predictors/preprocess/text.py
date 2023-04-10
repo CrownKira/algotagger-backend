@@ -16,8 +16,8 @@ from gensim.corpora import Dictionary
 from gensim.models import Word2Vec, KeyedVectors
 
 
-CLEAN_QUESTIONS_PATH = "core/predictors/xgb/cleaned_questions.csv"
-TRAIN_PATH = "core/predictors/xgb/train.csv"
+CLEAN_QUESTIONS_PATH = "core/predictors/preprocess/cleaned_questions.csv"
+TRAIN_PATH = "core/predictors/preprocess/train.csv"
 GLOVE_MODEL_PATH = "core/predictors/glove/glove_model.bin"
 
 # remove punctuation, stopwords, word length > 2 and lemmatize

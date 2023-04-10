@@ -4,7 +4,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PredictionSerializer
-from .predictors.xgb.xgb_predictor import predict
+from .predictors.xgb.predictor import predict_xgb
+from .predictors.distilbert.predictor import (
+    predict_distilbert,
+)
 
 
 @api_view(["POST"])
@@ -18,7 +21,9 @@ def predict_data_structure(request):
             model_used = serializer.validated_data["model_used"]
 
             if model_used.lower() == "xgboost":
-                dummy_prediction = predict(title, description)
+                dummy_prediction = predict_xgb(title, description)
+            elif model_used.lower() == "distilbert":
+                dummy_prediction = predict_distilbert(title, description)
             else:
                 dummy_prediction = {
                     "array": random.random(),

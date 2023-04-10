@@ -1,12 +1,12 @@
 import joblib
-from .textproc import dirty_to_clean
+from ..preprocess.text import dirty_to_clean
 
 XGB_MODELS_PATH = "core/predictors/xgb/xgb_models.joblib"
 
 clf = joblib.load(XGB_MODELS_PATH)
 
 
-def predict(title, text):
+def predict_xgb(title, text):
     question = title + " " + text
     X = dirty_to_clean([question])
     topics = [
