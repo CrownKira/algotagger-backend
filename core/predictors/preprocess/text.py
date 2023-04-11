@@ -14,7 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from gensim.models import TfidfModel
 from gensim.corpora import Dictionary
 from gensim.models import Word2Vec, KeyedVectors
-
+import gensim.downloader as api
 
 CLEAN_QUESTIONS_PATH = "core/predictors/preprocess/cleaned_questions.csv"
 TRAIN_PATH = "core/predictors/preprocess/train.csv"
@@ -100,11 +100,11 @@ def embed(test_documents, embed_type="tfidf"):
             test_doc_embeddings.append(sum(embedding))
     if embed_type == "glove":
         # Load the pre-trained GloVe embeddings
-        # glove_model = api.load('glove-wiki-gigaword-200')
-        model_path = GLOVE_MODEL_PATH
-        glove_model = KeyedVectors.load_word2vec_format(
-            model_path, binary=True
-        )
+        glove_model = api.load("glove-wiki-gigaword-200")
+        # model_path = GLOVE_MODEL_PATH
+        # glove_model = KeyedVectors.load_word2vec_format(
+        #     model_path, binary=True
+        # )
         # Create a dictionary and tf-idf model
         dictionary = Dictionary(tokenized_docs)
         corpus = [dictionary.doc2bow(doc) for doc in tokenized_docs]
