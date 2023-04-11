@@ -1,27 +1,29 @@
 import joblib
+import numpy as np
 from ..preprocess.text import (
     clean_questions,
     number_count_questions,
     embed,
     combine_number_count,
+    dirty_to_clean,
 )
 
-SVM_MODELS_PATH = "core/predictors/svm/svm_models.joblib"
+SVM_MODELS_PATH = "core/predictors/svm/svm_models_tfidf.joblib"
 
 svm_models = joblib.load(SVM_MODELS_PATH)
 
 
-def dirty_to_clean(questions):
-    """
-    Function to clean the questions
-    Input: qns: list of strings
-    Output: doc_clean - list of strings
-    """
-    cleaned_questions = clean_questions(questions)
-    number_count = number_count_questions(questions)
-    embed_questions = embed(cleaned_questions, embed_type="glove")
-    tmp = np.array(embed_questions)
-    return combine_number_count(embed_questions, number_count)
+# def dirty_to_clean(questions):
+#     """
+#     Function to clean the questions
+#     Input: qns: list of strings
+#     Output: doc_clean - list of strings
+#     """
+#     cleaned_questions = clean_questions(questions)
+#     number_count = number_count_questions(questions)
+#     embed_questions = embed(cleaned_questions, embed_type="glove")
+#     tmp = np.array(embed_questions)
+#     return combine_number_count(embed_questions, number_count)
 
 
 def predict_svm(title, text):
